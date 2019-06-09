@@ -1,5 +1,17 @@
 import { activeControls, Control } from '../control'
-import { Acceleration, Mass, Motion, Position, Radius, restingAt, sum, updateMotion, Vector } from './physics'
+import {
+  Acceleration,
+  add,
+  gravityAcceleration,
+  Mass,
+  Motion,
+  Position,
+  Radius,
+  restingAt,
+  sum,
+  updateMotion,
+  Vector,
+} from './physics'
 
 export type Body = Position & Mass & Radius
 
@@ -31,14 +43,17 @@ export const initial: State = {
 export const tick = (keys: string[], game: State): State => {
   const controls = activeControls(keys)
 
-  const player = updatePlayer(controls, game.player)
+  const player = updatePlayer(controls, game)
 
   return { ...game, player }
 }
 
-const updatePlayer = (controls: Control[], player: Player): Player => {
-  const acceleration = controlAcceleration(controls)
-  const motion = updateMotion(player.motion, acceleration)
+const updatePlayer = (controls: Control[], game: State): Player => {
+  const acceleration = add(
+    controlAcceleration(controls).a,
+    sum(game.bodies.map(body => gravityAcceleration(game.player.motion, body).a)),
+  )
+  const motion = updateMotion(game.player.motion, { a: acceleration })
 
   return { motion }
 }

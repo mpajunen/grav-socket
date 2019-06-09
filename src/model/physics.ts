@@ -11,6 +11,10 @@ export type Acceleration = { a: Vector }
 
 export type Motion = Position & Velocity & Acceleration
 
+export type Mass = { m: number }
+
+export type Radius = { r: number }
+
 export const zero: Vector = { x: 0, y: 0 }
 
 export const add = (v1: Vector, v2: Vector): Vector => ({ x: v1.x + v2.x, y: v1.y + v2.y })

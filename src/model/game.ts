@@ -1,11 +1,14 @@
 import { activeControls, Control } from '../control'
-import { Acceleration, Motion, restingAt, sum, updateMotion, Vector } from './physics'
+import { Acceleration, Mass, Motion, Position, Radius, restingAt, sum, updateMotion, Vector } from './physics'
+
+export type Body = Position & Mass & Radius
 
 export type Player = {
   motion: Motion
 }
 
 export type State = {
+  bodies: Body[]
   player: Player
 }
 
@@ -15,6 +18,11 @@ export const TICK_MS = 1000 / TICK_RATE
 const START_POSITION: Vector = { x: 200, y: 200 }
 
 export const initial: State = {
+  bodies: [
+    { p: { x: 300, y: 100 }, r: 30, m: 30 },
+    { p: { x: 500, y: 600 }, r: 50, m: 100 },
+    { p: { x: 100, y: 500 }, r: 30, m: 30 },
+  ],
   player: {
     motion: restingAt(START_POSITION),
   },
@@ -25,7 +33,7 @@ export const tick = (keys: string[], game: State): State => {
 
   const player = updatePlayer(controls, game.player)
 
-  return { player }
+  return { ...game, player }
 }
 
 const updatePlayer = (controls: Control[], player: Player): Player => {

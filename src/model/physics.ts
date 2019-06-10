@@ -9,6 +9,8 @@ export type Velocity = { velocity: Vector }
 
 export type Motion = Position & Velocity
 
+export type Orientation = { orientation: number }
+
 export type Mass = { mass: number }
 
 export type Radius = { radius: number }
@@ -33,11 +35,6 @@ export const updateMotion = (motion: Motion, acceleration: Vector): Motion => {
 
   return { position, velocity }
 }
-
-export const restingAt = (vector: Vector): Motion => ({
-  position: vector,
-  velocity: zero,
-})
 
 export const gravityAcceleration = (target: Position, source: Mass & Position): Vector => {
   const vector = subtract(target.position, source.position)

@@ -4,17 +4,18 @@ import {
   gravityAcceleration,
   Mass,
   Motion,
+  Orientation,
   Position,
   Radius,
-  restingAt,
   sum,
   updateMotion,
   Vector,
+  zero,
 } from './physics'
 
 export type Body = Position & Mass & Radius
 
-export type Ship = Motion
+export type Ship = Motion & Orientation
 
 export type Player = {
   ship: Ship
@@ -30,6 +31,18 @@ export const TICK_MS = 1000 / TICK_RATE
 
 const START_POSITION: Vector = { x: 200, y: 200 }
 
+const FULL_CIRCLE = 360
+
+const UPWARD = 90
+
+export const degToRad = (deg: number): number => 2 * Math.PI / FULL_CIRCLE * deg
+
+const createShip = (position: Vector): Ship => ({
+  position,
+  velocity: zero,
+  orientation: UPWARD,
+})
+
 export const initial: State = {
   bodies: [
     { position: { x: 300, y: 100 }, radius: 30, mass: 30 },
@@ -37,7 +50,7 @@ export const initial: State = {
     { position: { x: 100, y: 500 }, radius: 30, mass: 30 },
   ],
   player: {
-    ship: restingAt(START_POSITION),
+    ship: createShip(START_POSITION),
   },
 }
 
@@ -54,7 +67,10 @@ const updatePlayer = (controls: Control[], game: State): Player => {
     controlAcceleration(controls),
     sum(game.bodies.map(body => gravityAcceleration(game.player.ship, body))),
   )
-  const ship = updateMotion(game.player.ship, acceleration)
+  const ship: Ship = {
+    ...game.player.ship,
+    ...updateMotion(game.player.ship, acceleration),
+  }
 
   return { ship }
 }

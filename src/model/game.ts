@@ -29,6 +29,8 @@ export type State = {
 export const TICK_RATE = 30
 export const TICK_MS = 1000 / TICK_RATE
 
+const TURN_RATE = 5 // Degrees / tick
+
 const START_POSITION: Vector = { x: 200, y: 200 }
 
 const FULL_CIRCLE = 360
@@ -63,24 +65,40 @@ export const tick = (keys: string[], game: State): State => {
 }
 
 const updatePlayer = (controls: Control[], game: State): Player => {
+  const orientation = changeOrientation(game.player.ship, controls)
   const acceleration = add(
-    controlAcceleration(controls),
+    controlAcceleration({ orientation }, controls),
     sum(game.bodies.map(body => gravityAcceleration(game.player.ship, body))),
   )
   const ship: Ship = {
     ...game.player.ship,
+    orientation,
     ...updateMotion(game.player.ship, acceleration),
   }
 
   return { ship }
 }
 
-const units: Record<Control, Vector> = {
-  left: { x: -1, y: 0 },
-  right: { x: 1, y: 0 },
-  up: { x: 0, y: -1 },
-  down: { x: 0, y: 1 },
+const changeOrientation = ({ orientation }: Orientation, controls: Control[]): number => {
+  const changed = orientation + orientationChange(controls)
+
+  return changed >= FULL_CIRCLE ? changed - FULL_CIRCLE : changed < 0 ? changed + FULL_CIRCLE : changed
 }
 
-const controlAcceleration = (active: Control[]): Vector =>
-  sum(active.map(control => units[control]))
+const orientationChange = (controls: Control[]): number => {
+  const left = controls.includes('left')
+  const right = controls.includes('right')
+
+  return left && !right ? TURN_RATE : right && !left ? -TURN_RATE : 0
+}
+
+const controlAcceleration = ({ orientation }: Orientation, controls: Control[]): Vector => {
+  // No reverse / deceleration at least for now
+  if (!controls.includes('up')) {
+    return zero
+  }
+
+  const rad = degToRad(orientation)
+
+  return { x: Math.cos(rad), y: -Math.sin(rad) }
+}

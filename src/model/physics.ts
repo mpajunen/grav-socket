@@ -3,17 +3,15 @@ export type Vector = {
   y: number
 }
 
-export type Position = { p: Vector }
+export type Position = { position: Vector }
 
-export type Velocity = { v: Vector }
+export type Velocity = { velocity: Vector }
 
-export type Acceleration = { a: Vector }
+export type Motion = Position & Velocity
 
-export type Motion = Position & Velocity & Acceleration
+export type Mass = { mass: number }
 
-export type Mass = { m: number }
-
-export type Radius = { r: number }
+export type Radius = { radius: number }
 
 const GRAVITY_STRENGTH = 0.004
 
@@ -29,29 +27,24 @@ export const sum = (vectors: Vector[]): Vector => vectors.reduce(add, zero)
 
 export const dotProduct = (vector: Vector, value: number): Vector => ({ x: vector.x * value, y: vector.y * value })
 
-export const updateVelocity = ({ a }: Acceleration, { v }: Velocity): Velocity => ({ v: add(a, v) })
+export const updateMotion = (motion: Motion, acceleration: Vector): Motion => {
+  const velocity = add(motion.velocity, acceleration)
+  const position = add(motion.position, velocity)
 
-export const updatePosition = ({ v }: Velocity, { p }: Position): Position => ({ p: add(v, p) })
-
-export const updateMotion = (motion: Motion, acceleration: Acceleration): Motion => {
-  const velocity = updateVelocity(acceleration, motion)
-  const position = updatePosition(velocity, motion)
-
-  return { p: position.p, v: velocity.v, a: acceleration.a }
+  return { position, velocity }
 }
 
 export const restingAt = (vector: Vector): Motion => ({
-  p: vector,
-  v: zero,
-  a: zero,
+  position: vector,
+  velocity: zero,
 })
 
-export const gravityAcceleration = (target: Position, source: Mass & Position): Acceleration => {
-  const vector = subtract(target.p, source.p)
+export const gravityAcceleration = (target: Position, source: Mass & Position): Vector => {
+  const vector = subtract(target.position, source.position)
   const distance = length(vector)
   if (distance === 0) {
-    return { a: zero }
+    return zero
   }
 
-  return { a: dotProduct(vector, -GRAVITY_STRENGTH * source.m / distance) }
+  return dotProduct(vector, -GRAVITY_STRENGTH * source.mass / distance)
 }

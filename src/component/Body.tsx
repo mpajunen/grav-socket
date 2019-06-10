@@ -1,18 +1,17 @@
 import React from 'react'
 import { Circle } from 'react-konva'
-import { Position, Radius } from '../model/physics'
+import * as Game from '../model/game'
 
 type Props = {
-  position: Position
-  radius: Radius
+  body: Game.Body
 }
 
-const Body: React.FC<Props> = ({ position, radius }) => {
+const Body: React.FC<Props> = ({ body }) => {
   return (
     <Circle
-      radius={radius.r}
-      x={position.p.x}
-      y={position.p.y}
+      radius={body.radius}
+      x={body.position.x}
+      y={body.position.y}
       fill="grey"
       shadowBlur={5}
     />

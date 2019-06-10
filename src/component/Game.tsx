@@ -21,9 +21,9 @@ const Game: React.FC = () => {
     <div onKeyDown={onDown} onKeyUp={onUp} tabIndex={1}>
       <Stage width={window.innerWidth} height={window.innerHeight}>
         <Layer>
-          <Ship motion={state.player.motion} />
+          <Ship ship={state.player.ship} />
           {state.bodies.map((body, index) => (
-            <Body key={index} position={body} radius={body} />
+            <Body key={index} body={body} />
           ))}
         </Layer>
       </Stage>

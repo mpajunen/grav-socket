@@ -13,7 +13,7 @@ export type Mass = { mass: number }
 
 export type Radius = { radius: number }
 
-const GRAVITY_STRENGTH = 0.004
+const GRAVITY_STRENGTH = 10
 
 export const zero: Vector = { x: 0, y: 0 }
 
@@ -46,5 +46,5 @@ export const gravityAcceleration = (target: Position, source: Mass & Position): 
     return zero
   }
 
-  return dotProduct(vector, -GRAVITY_STRENGTH * source.mass / distance)
+  return dotProduct(vector, -GRAVITY_STRENGTH * source.mass / (distance ** 3))
 }

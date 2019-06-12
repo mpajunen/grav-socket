@@ -47,3 +47,13 @@ export const gravityAcceleration = (ship: Ship, source: Mass & Position & Radius
 
   return dotProduct(vector, -GRAVITY_STRENGTH * source.mass / (distance ** 3))
 }
+
+export const applyCollision = (ship: Ship, source: Position & Radius): Ship => {
+  const line = subtract(ship.position, source.position)
+  const distance = length(line)
+  if (distance > (ship.radius + source.radius)) {
+    return ship
+  }
+
+  return { ...ship, position: ship.position, velocity: subtract(zero, ship.velocity) }
+}

@@ -1,6 +1,7 @@
 import { activeControls, Control } from '../control'
 import {
   add,
+  applyCollision,
   gravityAcceleration,
   Mass,
   Motion,
@@ -73,10 +74,11 @@ const updatePlayer = (controls: Control[], game: State): Player => {
     controlAcceleration({ orientation }, controls),
     sum(game.bodies.map(body => gravityAcceleration(game.player.ship, body))),
   )
+  const motion = applyCollisions(game.bodies, game.player.ship)
   const ship: Ship = {
     ...game.player.ship,
     orientation,
-    ...updateMotion(game.player.ship, acceleration),
+    ...updateMotion(motion, acceleration),
   }
 
   return { ship }
@@ -87,6 +89,8 @@ const changeOrientation = ({ orientation }: Orientation, controls: Control[]): n
 
   return changed >= FULL_CIRCLE ? changed - FULL_CIRCLE : changed < 0 ? changed + FULL_CIRCLE : changed
 }
+
+const applyCollisions = (bodies: Body[], ship: Ship): Ship => bodies.reduce(applyCollision, ship)
 
 const orientationChange = (controls: Control[]): number => {
   const left = controls.includes('left')

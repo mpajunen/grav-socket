@@ -1,3 +1,5 @@
+import { Ship } from './game'
+
 export type Vector = {
   x: number
   y: number
@@ -36,10 +38,10 @@ export const updateMotion = (motion: Motion, acceleration: Vector): Motion => {
   return { position, velocity }
 }
 
-export const gravityAcceleration = (target: Position, source: Mass & Position): Vector => {
-  const vector = subtract(target.position, source.position)
+export const gravityAcceleration = (ship: Ship, source: Mass & Position & Radius): Vector => {
+  const vector = subtract(ship.position, source.position)
   const distance = length(vector)
-  if (distance === 0) {
+  if (distance < (ship.radius + source.radius)) {
     return zero
   }
 

@@ -66,5 +66,10 @@ export const applyCollision = (ship: Ship, source: Position & Radius): Ship => {
     return ship
   }
 
-  return { ...ship, position: ship.position, velocity: subtract(zero, ship.velocity) }
+  const newAngle = 2 * angle(line) - angle(ship.velocity) - Math.PI
+  const velocity = dotProduct(unit(newAngle), length(ship.velocity))
+
+  return { ...ship, position: ship.position, velocity }
 }
+
+const angle = (vector: Vector): number => Math.atan2(-vector.y, vector.x)

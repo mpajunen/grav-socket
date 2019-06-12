@@ -17,9 +17,18 @@ export type Mass = { mass: number }
 
 export type Radius = { radius: number }
 
+export const FULL_CIRCLE = 360
+
 const GRAVITY_STRENGTH = 10
 
 export const zero: Vector = { x: 0, y: 0 }
+
+export const clampAngle = (deg: number): number =>
+  deg >= FULL_CIRCLE ? deg - FULL_CIRCLE : deg < 0 ? deg + FULL_CIRCLE : deg
+
+export const degToRad = (deg: number): number => 2 * Math.PI / FULL_CIRCLE * deg
+
+export const radToDeg = (rad: number): number => rad * FULL_CIRCLE / (2 * Math.PI)
 
 export const add = (v1: Vector, v2: Vector): Vector => ({ x: v1.x + v2.x, y: v1.y + v2.y })
 
@@ -30,6 +39,8 @@ export const length = (vector: Vector): number => Math.sqrt(vector.x ** 2 + vect
 export const sum = (vectors: Vector[]): Vector => vectors.reduce(add, zero)
 
 export const dotProduct = (vector: Vector, value: number): Vector => ({ x: vector.x * value, y: vector.y * value })
+
+export const unit = (rad: number): Vector => ({ x: Math.cos(rad), y: -Math.sin(rad) })
 
 export const updateMotion = (motion: Motion, acceleration: Vector): Motion => {
   const velocity = add(motion.velocity, acceleration)

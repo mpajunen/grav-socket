@@ -1,7 +1,7 @@
 import React from 'react'
 import { Group, Wedge } from 'react-konva'
 import * as Game from '../model/game'
-import { degToRad } from '../model/game'
+import { degToRad } from '../model/physics'
 
 type Props = {
   ship: Game.Ship

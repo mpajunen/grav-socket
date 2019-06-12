@@ -2,6 +2,8 @@ import { activeControls, Control } from '../control'
 import {
   add,
   applyCollision,
+  clampAngle,
+  degToRad,
   gravityAcceleration,
   Mass,
   Motion,
@@ -9,6 +11,7 @@ import {
   Position,
   Radius,
   sum,
+  unit,
   updateMotion,
   Vector,
   zero,
@@ -36,11 +39,7 @@ const START_POSITION: Vector = { x: 200, y: 200 }
 
 const SHIP_RADIUS = 10
 
-const FULL_CIRCLE = 360
-
 const UPWARD = 90
-
-export const degToRad = (deg: number): number => 2 * Math.PI / FULL_CIRCLE * deg
 
 const createShip = (position: Vector): Ship => ({
   position,
@@ -84,11 +83,8 @@ const updatePlayer = (controls: Control[], game: State): Player => {
   return { ship }
 }
 
-const changeOrientation = ({ orientation }: Orientation, controls: Control[]): number => {
-  const changed = orientation + orientationChange(controls)
-
-  return changed >= FULL_CIRCLE ? changed - FULL_CIRCLE : changed < 0 ? changed + FULL_CIRCLE : changed
-}
+const changeOrientation = ({ orientation }: Orientation, controls: Control[]): number =>
+  clampAngle(orientation + orientationChange(controls))
 
 const applyCollisions = (bodies: Body[], ship: Ship): Ship => bodies.reduce(applyCollision, ship)
 
@@ -105,7 +101,5 @@ const controlAcceleration = ({ orientation }: Orientation, controls: Control[]):
     return zero
   }
 
-  const rad = degToRad(orientation)
-
-  return { x: Math.cos(rad), y: -Math.sin(rad) }
+  return unit(degToRad(orientation))
 }

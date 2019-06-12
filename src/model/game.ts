@@ -15,7 +15,7 @@ import {
 
 export type Body = Position & Mass & Radius
 
-export type Ship = Motion & Orientation
+export type Ship = Motion & Orientation & Radius
 
 export type Player = {
   ship: Ship
@@ -33,6 +33,8 @@ const TURN_RATE = 5 // Degrees / tick
 
 const START_POSITION: Vector = { x: 200, y: 200 }
 
+const SHIP_RADIUS = 10
+
 const FULL_CIRCLE = 360
 
 const UPWARD = 90
@@ -43,6 +45,7 @@ const createShip = (position: Vector): Ship => ({
   position,
   velocity: zero,
   orientation: UPWARD,
+  radius: SHIP_RADIUS,
 })
 
 export const initial: State = {
